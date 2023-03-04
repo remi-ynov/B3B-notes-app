@@ -7,7 +7,7 @@ interface Props {
 }
 
 const NotesList: React.FC<Props> = ({ data }) => (
-  <div className="flex flex-wrap my-4">
+  <div className="grid grid-cols-3 gap-4 my-4">
     {data.map((note) => (
       <NoteItem key={note.id} note={note} />
     ))}

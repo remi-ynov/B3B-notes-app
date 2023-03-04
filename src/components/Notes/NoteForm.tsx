@@ -14,14 +14,16 @@ interface Props {
 const NoteForm: React.FC<Props> = ({ addData, close }) => {
   const [title, setTitle] = useState<string>('');
   const [content, setContent] = useState<string>('');
+  const [loading, setLoading] = useState<boolean>(false);
 
   const addNote = async () => {
     if (title.length > 0 && content.length > 0) {
       try {
+        setLoading(true);
         const docRef = await addDoc<Note>(collection(db, 'notes') as CollectionReference<Note>, {
           title,
           content,
-          created_date: new Date(),
+          created_at: new Date(),
         });
 
         const doc = await getDoc(docRef);
@@ -36,7 +38,10 @@ const NoteForm: React.FC<Props> = ({ addData, close }) => {
 
         close();
       } catch (e) {
+        // TODO : Afficher une erreur à l'utilisateur
         console.error('Error adding document: ', e);
+      } finally {
+        setLoading(false);
       }
     }
   };
@@ -50,21 +55,23 @@ const NoteForm: React.FC<Props> = ({ addData, close }) => {
         name="title"
         value={title}
         onChange={(event) => setTitle(event.target.value)}
-        className="border-2 border-black mb-2"
+        className="border-2 border-black mb-2 p-2"
       />
 
-      <label htmlFor="content">CONTENT</label>
+      <label htmlFor="content">CONTENU</label>
       <textarea
         name="content"
         id="content"
         value={content}
         onChange={(event) => setContent(event.target.value)}
-        className="border-2 border-black mb-2"
+        className="border-2 border-black mb-2 p-2"
+        rows={8}
       />
 
       <Button
         text="Créer"
         type="submit"
+        loading={loading}
         onClick={(e) => {
           e.preventDefault();
           addNote();

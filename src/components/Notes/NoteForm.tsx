@@ -1,17 +1,19 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import {
-  collection, addDoc, getDoc, CollectionReference,
+  addDoc, collection, CollectionReference, getDoc,
 } from 'firebase/firestore';
 import { db } from 'src/config/firebase';
 import { Note } from 'src/types/NoteType';
 import Button from 'src/components/Button';
+import { NoteContext } from 'src/contexts/NoteProvider';
+import { NoteActionType } from 'src/contexts/noteReducer';
 
 interface Props {
-  addData: (note: Note) => void;
   close: () => void;
 }
 
-const NoteForm: React.FC<Props> = ({ addData, close }) => {
+const NoteForm: React.FC<Props> = ({ close }) => {
+  const [, dispatch] = useContext(NoteContext);
   const [title, setTitle] = useState<string>('');
   const [content, setContent] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(false);
@@ -30,9 +32,12 @@ const NoteForm: React.FC<Props> = ({ addData, close }) => {
         const data = doc.data();
 
         if (data) {
-          addData({
-            id: doc.id,
-            ...data,
+          dispatch({
+            type: NoteActionType.ADD_NOTES,
+            payload: {
+              id: doc.id,
+              ...data,
+            },
           });
         }
 

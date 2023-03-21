@@ -35,8 +35,8 @@ export const noteReducer = (state: NoteState, action: Action<NoteActionType>) =>
       return {
         ...state,
         notes: [
-          ...state.notes.filter((n) => n.id === action.payload.id),
           action.payload,
+          ...state.notes.filter((n) => n.id !== action.payload.id),
         ],
       };
     case NoteActionType.SET_LOADING:
